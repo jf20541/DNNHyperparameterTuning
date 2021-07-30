@@ -6,7 +6,7 @@ class DeepNeuralNetwork(nn.Module):
     def __init__(self, n_features, n_targets, n_layers, hidden_size, dropout):
         super().__init__()
         layers = []
-        for l in range(layers):
+        for _ in range(n_layers):
             if len(layers) == 0:
                 layers.append(nn.Linear(n_features, hidden_size))
                 layers.append(nn.BatchNorm1d(hidden_size))
