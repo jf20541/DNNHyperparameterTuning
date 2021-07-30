@@ -15,6 +15,6 @@ class HotelDataSet(Dataset):
     # return item on the index
     def __getitem__(self, idx):
         return {
-            "x": torch.tensor(self.features[idx], dtype=torch.float),
-            "y": torch.tensor(self.targets[idx], dtype=torch.float),
+            "x": torch.tensor(self.features[idx: ,], dtype=torch.float),
+            "y": torch.tensor(self.targets[idx:, ], dtype=torch.float),
         }
