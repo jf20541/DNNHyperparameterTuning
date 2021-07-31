@@ -10,21 +10,16 @@ class Model(nn.Module):
                 layers.append(nn.Linear(nfeatures, hidden_size))
                 layers.append(nn.BatchNorm1d(hidden_size))
                 layers.append(nn.Dropout(dropout))
-                layers.append(nn.ReLU())
+                layers.append(nn.Sigmoid())
 
             else:
                 layers.append(nn.Linear(hidden_size, hidden_size))
                 layers.append(nn.BatchNorm1d(hidden_size))
                 layers.append(nn.Dropout(dropout))
-                layers.append(nn.ReLU())
+                layers.append(nn.Sigmoid())
 
         layers.append(nn.Linear(hidden_size, ntargets))
         self.model = nn.Sequential(*layers)
 
     def forward(self, x):
         return self.model(x)
-
-
-# class DeepNeuralNetwork(nn.Module):
-#     def __init__(self, n_features, n_targets, n_layers, hidden_size, dropout):
-#         super(DeepNeuralNetwork, self).__init__()

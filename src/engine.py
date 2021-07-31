@@ -1,5 +1,6 @@
 import torch
 import torch.nn as nn
+from sklearn.metrics import roc_auc_score
 
 # def loss_fn(outputs, targets):
 #     return torch.nn.BCELoss()(outputs, targets.view(-1, 1))
@@ -12,7 +13,7 @@ class Engine:
 
     @staticmethod
     def loss_fn(outputs, targets):
-        return nn.BCEWithLogitsLoss()(outputs, targets)  # (outputs, targets)
+        return nn.BCEWithLogitsLoss()(outputs, targets)
 
     def train(self, dataloader):
         # train model
