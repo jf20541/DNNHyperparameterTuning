@@ -6,6 +6,7 @@ from model import Model
 import torch
 import engine
 import numpy as np
+import optuna
 
 """
 Training Set: x_train (features), x_test (targets)
@@ -13,7 +14,7 @@ Testing Set: y_train (features), y_test (targets)
 """
 
 
-def train(fold, save_model=False):
+def train(fold, params, save_model=False):
     df = pd.read_csv(config.TRAINING_FOLDS)
 
     train_df = df[df.kfold != fold].reset_index(drop=True)
@@ -39,12 +40,12 @@ def train(fold, save_model=False):
     model = Model(
         nfeatures=xtrain.shape[1],
         ntargets=ytrain.shape[1],
-        nlayers=2,
-        hidden_size=30,
-        dropout=0.3,
+        nlayers=params["num_layers"],
+        hidden_size=params["hidden_size"],
+        dropout=params["dropout"],
     )
-    print(model)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+    # print(model)
+    optimizer = torch.optim.Adam(model.parameters(), lr=params["learning_rate"])
     eng = engine.Engine(model, optimizer)
 
     best_loss = np.inf
@@ -67,9 +68,37 @@ def train(fold, save_model=False):
         if early_stopping_counter > early_stopping_iter:
             break
 
+    return best_loss
 
-# def objective(trial):
+
+def objective(trial):
+    params = {
+        "num_layers": trial.suggest_int("num_layers", 1, 7),
+        "hidden_size": trial.suggest_int("hidden_size", 16, 128),
+        "dropout": trial.suggest_uniform("dropout", 0.1, 0.5),
+        "learning_rate": trial.suggest_loguniform("learning_rate", 1e-5, 1e-3),
+    }
+    all_losses = []
+    for f_ in range(5):
+        temp_loss = train(f_, params, save_model=False)
+        all_losses.append(temp_loss)
+
+    return np.mean(all_losses)
 
 
 if __name__ == "__main__":
-    train(fold=0)
+    # train(fold=0)
+    study = optuna.create_study(direction="minimize")
+    study.optimize(objective, n_trials=10)
+
+    print("best trial:")
+    trial_ = study.best_trial
+    print(trial_.values)
+    print(trial_.params)
+
+    scores = 0
+    for j in range(5):
+        scr = train(j, trial_.params, save_model=True)
+        scores += scr
+
+    print(scores / 5)
