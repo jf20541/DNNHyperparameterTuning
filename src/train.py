@@ -79,7 +79,7 @@ def objective(trial):
         "learning_rate": trial.suggest_loguniform("learning_rate", 1e-5, 1e-3),
     }
     all_losses = []
-    for f_ in range(5):
+    for f_ in range(1):
         temp_loss = train(f_, params, save_model=False)
         all_losses.append(temp_loss)
 
@@ -97,8 +97,8 @@ if __name__ == "__main__":
     print(trial_.params)
 
     scores = 0
-    for j in range(5):
+    for j in range(1):
         scr = train(j, trial_.params, save_model=True)
         scores += scr
 
-    print(scores / 5)
+    print(scores)
