@@ -2,19 +2,41 @@
 
 
 ## Objective
-Deep Neural Networks have a variety of hyperparameters such as **learning rate, number of layers, hidden size, dropout, regularization strength, activation functions, etc** that can strongly determine the performance of the model. The optimization model uses metric values through search process probabilistic to converge to the optimal combination of hyperparameter.
+Deep Neural Networks have a variety of hyperparameters such as **learning rate, number of layers, hidden size, dropout, regularization strength, activation functions, etc** that can strongly determine the performance of the model. The optimization model uses metric values through search process probabilistic to converge to the optimal combination of hyperparameters.
 
 **Optuna** has three building blocks:
 1. Trial: A single call of the objective function
 2. Study: An optimization session, set of trials
 3. Parameter: Parameters optimized
 
-## Hyper-Parameters
-`optimizer:`\
-`num_layers:` \
-`hidden_size:`\
-`dropout:`\
-`learning_rate:` The step size at each iteration while moving toward a minimum of a loss function
+## Output (Optimal HyperParameters)
+```
+- 'optimizer': <class 'torch.optim.adamw.AdamW'>
+- 'num_layers': 4, 
+- 'hidden_size': 97, 
+- 'dropout': 0.38085407771111446, 
+- 'learning_rate': 0.00020197383590352865
+ ```
+```bash
+       ....                   ....                  ....
+Epoch:10/15, Train ROC-AUC: 0.9539, Eval ROC-AUC: 0.8428
+Epoch:11/15, Train ROC-AUC: 0.9564, Eval ROC-AUC: 0.9069
+Epoch:12/15, Train ROC-AUC: 0.9578, Eval ROC-AUC: 0.9217
+Epoch:13/15, Train ROC-AUC: 0.9684, Eval ROC-AUC: 0.9290
+Epoch:14/15, Train ROC-AUC: 0.9688, Eval ROC-AUC: 0.9337
+Epoch:15/15, Train ROC-AUC: 0.9701, Eval ROC-AUC: 0.9501
+```
+
+## HyperParameters Importance
+- `optimizer:` Updates the model in response to the output of the loss function with complex derivatives
+- `num_layers:` Number of hidden layers in the model
+- `hidden_size:` Number of hidden unit or cells on each hidden layer 
+- `dropout:`Randomly drop hidden units (along with their connections) from the neural network during training
+- `learning_rate:` The step size at each iteration while moving toward a minimum of a loss function
+
+
+![](https://github.com/jf20541/DNNHyperparameterTuning/blob/main/plots/HyperparameterImportance.png?raw=true)
+
 
 ### Model-Based Samplers 
 - **GridSearch:** Exhaustive search over specified parameter values
@@ -38,28 +60,25 @@ Deep Neural Networks have a variety of hyperparameters such as **learning rate, 
     │   └── model.bin            # Deep Neural Networks parameters saved into model.bin 
     ├── requierments.txt         # Packages used for project
     └── README.md
-    
-## Output (Optimal Hyper-Parameters)
-```
-Trial 7 finished with value: 0.6218652781986055 and parameters: 
-
-- 'optimizer': <class 'torch.optim.adamw.AdamW'>
-- 'num_layers': 5, 
-- 'hidden_size': 113, 
-- 'dropout': 0.40159780066818385, 
-- 'learning_rate': 6.648176014795157e-05
-
- ```
-
-## Output
-```bash
-       ....                   ....                  ....
-
-```
 
 ## Model's Architecture
 ```
 DeepNeuralNetwork(
-
+  (model): Sequential(
+    (0): Linear(in_features=31, out_features=97, bias=True)
+    (1): Dropout(p=0.38085407771111446, inplace=False)
+    (2): ReLU()
+    (3): Linear(in_features=97, out_features=97, bias=True)
+    (4): Dropout(p=0.38085407771111446, inplace=False)
+    (5): ReLU()
+    (6): Linear(in_features=97, out_features=97, bias=True)
+    (7): Dropout(p=0.38085407771111446, inplace=False)
+    (8): ReLU()
+    (9): Linear(in_features=97, out_features=97, bias=True)
+    (10): Dropout(p=0.38085407771111446, inplace=False)
+    (11): ReLU()
+    (12): Linear(in_features=97, out_features=1, bias=True)
+    (13): Sigmoid()
+  )
 )
 ```  
