@@ -1,17 +1,11 @@
-import config
-from dataset import HotelDataSet
-from torch.utils.data import DataLoader
 import pandas as pd
-from model import Model
-import torch
-import engine
 import numpy as np
+import torch
 import optuna
-
-"""
-Training Set: x_train (features), x_test (targets)
-Testing Set: y_train (features), y_test (targets)
-"""
+from dataset import HotelDataSet
+from model import DeepNeuralNetwork
+import config
+import engine
 
 
 def train(fold, params, save_model=False):
@@ -34,18 +28,20 @@ def train(fold, params, save_model=False):
         train_dataset, batch_size=config.TRAIN_BATCH_SIZE
     )
     test_loader = torch.utils.data.DataLoader(
-        test_dataset, batch_size=config.TRAIN_BATCH_SIZE
+        test_dataset, batch_size=config.TEST_BATCH_SIZE
     )
 
-    model = Model(
-        nfeatures=xtrain.shape[1],
-        ntargets=ytrain.shape[1],
-        nlayers=params["num_layers"],
+    model = DeepNeuralNetwork(
+        n_features=xtrain.shape[1],
+        n_targets=ytrain.shape[1],
+        n_layers=params["num_layers"],
         hidden_size=params["hidden_size"],
         dropout=params["dropout"],
     )
-    # print(model)
-    optimizer = torch.optim.Adam(model.parameters(), lr=params["learning_rate"])
+
+
+    optimizer = params['optimizer'](model.parameters(), lr=params["learning_rate"])
+
     eng = engine.Engine(model, optimizer)
 
     best_loss = np.inf
@@ -73,6 +69,7 @@ def train(fold, params, save_model=False):
 
 def objective(trial):
     params = {
+        'optimizer': trial.suggest_categorical('optimizer', [torch.optim.Adam, torch.optim.SGD, torch.optim.AdamW]),
         "num_layers": trial.suggest_int("num_layers", 1, 7),
         "hidden_size": trial.suggest_int("hidden_size", 16, 128),
         "dropout": trial.suggest_uniform("dropout", 0.1, 0.5),
@@ -87,7 +84,6 @@ def objective(trial):
 
 
 if __name__ == "__main__":
-    # train(fold=0)
     study = optuna.create_study(direction="minimize")
     study.optimize(objective, n_trials=10)
 
