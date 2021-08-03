@@ -2,7 +2,7 @@
 
 
 ## Objective
-Deep Neural Networks have a variety of hyperparameters such as **learning rate, number of layers, hidden size, dropout, etc** as variables that control the behavior of models and can strongly determine the performance of the model. Using **Bayesian Filtering** to find the optimal hyperparameters and further explore trials near its minimal loss function. 
+Deep Neural Networks have a variety of hyperparameters such as **learning rate, number of layers, hidden size, dropout, regularization strength, activation functions, etc** as variables that control the behavior of models and can strongly determine the performance of the model. Using **Bayesian Filtering** to find the optimal hyperparameters and converge to the best set of hyperparameter values.
 
 ### Hyper-Parameters?
 `optimizer:`\
