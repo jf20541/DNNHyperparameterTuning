@@ -2,7 +2,7 @@
 
 
 ## Objective
-Deep Neural Networks have a variety of hyperparameters such as **learning rate, number of layers, hidden size, dropout, regularization strength, activation functions, etc** that can strongly determine the performance of the model. The optimization model uses metric values through search process probabilistic to converge to the optimal combination of hyperparameter.
+Deep Neural Networks have a variety of hyperparameters such as **learning rate, number of layers, hidden size, dropout, regularization strength, activation functions, etc** that can strongly determine the performance of the model. The optimization model uses metric values through search process probabilistic to converge to the optimal combination of hyperparameters.
 
 **Optuna** has three building blocks:
 1. Trial: A single call of the objective function
