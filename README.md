@@ -2,9 +2,14 @@
 
 
 ## Objective
-Deep Neural Networks have a variety of hyperparameters such as **learning rate, number of layers, hidden size, dropout, regularization strength, activation functions, etc** as variables that control the behavior of models and can strongly determine the performance of the model. Using **Bayesian Filtering** to find the optimal hyperparameters and converge to the best set of hyperparameter values.
+Deep Neural Networks have a variety of hyperparameters such as **learning rate, number of layers, hidden size, dropout, regularization strength, activation functions, etc** that can strongly determine the performance of the model. The optimization model uses metric values through search process probabilistic to converge to the optimal combination of hyperparameter.
 
-### Hyper-Parameters?
+**Optuna** has three building blocks:
+1. Trial: A single call of the objective function
+2. Study: An optimization session, set of trials
+3. Parameter: Parameters optimized
+
+## Hyper-Parameters
 `optimizer:`\
 `num_layers:` \
 `hidden_size:`\
