@@ -11,6 +11,14 @@ import torch.optim as optim
 
 
 def train(fold, params, save_model=False):
+    """[summary]
+    Args:
+        fold ([int]): [Stratified 5-Fold (avoids overfitting) ]
+        params ([dict]): [define a combination of hyperparameters]
+        save_model (bool, optional): [save optimal model's parameters]. Defaults to False.
+    Returns:
+        [float]: [optimal ROC-AUC metric]
+    """
     df = pd.read_csv(config.TRAINING_FOLDS)
 
     train_df = df[df.kfold != fold].reset_index(drop=True)
@@ -32,7 +40,7 @@ def train(fold, params, save_model=False):
     test_loader = torch.utils.data.DataLoader(
         test_dataset, batch_size=config.TEST_BATCH_SIZE
     )
-
+    # inititate DNN with params
     model = DeepNeuralNetwork(
         n_features=xtrain.shape[1],
         n_targets=ytrain.shape[1],
@@ -43,23 +51,21 @@ def train(fold, params, save_model=False):
     print(model)
 
     optimizer = params["optimizer"](model.parameters(), lr=params["learning_rate"])
-
     eng = Engine(model, optimizer)
 
     best_metric = 0
-
     for epochs in range(config.EPOCHS):
         # initiating training and evaluation function
         train_targets, train_outputs = eng.train_fn(train_loader)
         eval_targets, eval_outputs = eng.eval_fn(test_loader)
         eval_outputs = np.array(eval_outputs) >= 0.5
-        # calculating accuracy score
+        # calculating roc-auc score for train&eval
         train_metric = roc_auc_score(train_targets, train_outputs)
         eval_metric = roc_auc_score(eval_targets, eval_outputs)
         print(
             f"Epoch:{epochs+1}/{config.EPOCHS}, Train ROC-AUC: {train_metric:.4f}, Eval ROC-AUC: {eval_metric:.4f}"
         )
-
+        # save optimal metrics to model.bin
         if eval_metric > best_metric:
             best_metric = eval_metric
             if save_model:
@@ -69,9 +75,16 @@ def train(fold, params, save_model=False):
 
 
 if __name__ == "__main__":
-    #  trial object is used to construct a model inside the objective function
+
     def objective(trial):
-        # define a combination of hyperparameters
+        """[define a combination of hyperparameters]
+        Args:
+            trial ([type]): [trial object is used to construct a model inside the objective function]
+        Raises:
+            optuna.exceptions.TrialPruned: [If pruned, we go to next n_trials]
+        Returns:
+            [type]: [the value that Optuna will optimize]
+        """
         params = {
             "optimizer": trial.suggest_categorical(
                 "optimizer", [optim.SGD, optim.Adam, optim.AdamW]
@@ -89,7 +102,6 @@ if __name__ == "__main__":
         if trial.should_prune():
             raise optuna.exceptions.TrialPruned()
 
-        # return value is objective value that Optuna will optimize
         return np.mean(all_metrics)
 
     # study object contains information about the required parameter space
@@ -97,8 +109,10 @@ if __name__ == "__main__":
     study = optuna.create_study(
         sampler=optuna.samplers.TPESampler(), direction="maximize"
     )
+    # initiate optimize with 10 trials
     study.optimize(objective, n_trials=10)
 
+    # define number of pruned&completed trials (saves time and computing power)
     pruned_trials = [
         t for t in study.trials if t.state == optuna.trial.TrialState.PRUNED
     ]
@@ -106,6 +120,7 @@ if __name__ == "__main__":
         t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE
     ]
 
+    # print metric and optimal combiniation of hyperparameters
     n_trial = study.best_trial
     print(f"Best Trial: {n_trial}, Value: {n_trial.values}")
     print(f"Best Parameters: {n_trial.params}")
@@ -114,9 +129,7 @@ if __name__ == "__main__":
     for j in range(1):
         scr = train(j, n_trial.params, save_model=True)
         scores += scr
-
-    print(f"SCORE: {scores}")
-
+    # plot param importance and contour
     fig = optuna.visualization.plot_param_importances(study)
     fig2 = optuna.visualization.plot_contour(
         study, params=["learning_rate", "optimizer"]
@@ -127,4 +140,9 @@ if __name__ == "__main__":
     df = study.trials_dataframe().drop(
         ["state", "datetime_start", "datetime_complete"], axis=1
     )
+
+    print(f"SCORE: {scores}")
+    print(f"Number of Finished Trials {len(study.trials)}")
+    print(f"Number of Pruned Trials {len(pruned_trials)}")
+    print(f"Number of Completed Trials {len(complete_trials)}")
     print(df)
