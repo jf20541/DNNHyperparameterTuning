@@ -8,13 +8,11 @@ class DeepNeuralNetwork(nn.Module):
         for _ in range(n_layers):
             if len(layers) == 0:
                 layers.append(nn.Linear(n_features, hidden_size))
-                layers.append(nn.BatchNorm1d(hidden_size))
                 layers.append(nn.Dropout(dropout))
                 layers.append(nn.ReLU())
 
             else:
                 layers.append(nn.Linear(hidden_size, hidden_size))
-                layers.append(nn.BatchNorm1d(hidden_size))
                 layers.append(nn.Dropout(dropout))
                 layers.append(nn.ReLU())
 

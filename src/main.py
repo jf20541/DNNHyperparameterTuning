@@ -5,8 +5,9 @@ import optuna
 from dataset import HotelDataSet
 from model import DeepNeuralNetwork
 import config
-from engine2 import Engine2
+from engine import Engine
 from sklearn.metrics import roc_auc_score
+import torch.optim as optim
 
 
 def train(fold, params, save_model=False):
@@ -39,14 +40,13 @@ def train(fold, params, save_model=False):
         hidden_size=params["hidden_size"],
         dropout=params["dropout"],
     )
+    print(model)
 
     optimizer = params["optimizer"](model.parameters(), lr=params["learning_rate"])
 
-    eng = Engine2(model, optimizer)
+    eng = Engine(model, optimizer)
 
     best_metric = 0
-    # early_stopping_iter = 10
-    # early_stopping_counter = 0
 
     for epochs in range(config.EPOCHS):
         # initiating training and evaluation function
@@ -60,27 +60,24 @@ def train(fold, params, save_model=False):
             f"Epoch:{epochs+1}/{config.EPOCHS}, Train ROC-AUC: {train_metric:.4f}, Eval ROC-AUC: {eval_metric:.4f}"
         )
 
-        if eval_metric >= best_metric:
+        if eval_metric > best_metric:
             best_metric = eval_metric
             if save_model:
                 torch.save(model.state_dict(), f"../models/model{fold}.bin")
-        # else:
-        #     early_stopping_counter += 1
 
-        # if early_stopping_counter > early_stopping_iter:
-        #     break
     return best_metric
 
 
 if __name__ == "__main__":
-
+    #  trial object is used to construct a model inside the objective function
     def objective(trial):
+        # define a combination of hyperparameters
         params = {
             "optimizer": trial.suggest_categorical(
-                "optimizer", [torch.optim.Adam, torch.optim.AdamW]
+                "optimizer", [optim.SGD, optim.Adam, optim.AdamW]
             ),
-            "num_layers": trial.suggest_int("num_layers", 1, 5),
-            "hidden_size": trial.suggest_int("hidden_size", 12, 84),
+            "num_layers": trial.suggest_int("num_layers", 1, 10),
+            "hidden_size": trial.suggest_int("hidden_size", 2, 112),
             "dropout": trial.suggest_uniform("dropout", 0.1, 0.4),
             "learning_rate": trial.suggest_loguniform("learning_rate", 1e-4, 1e-2),
         }
@@ -88,13 +85,19 @@ if __name__ == "__main__":
         for i in range(1):
             temp_metric = train(i, params, save_model=False)
             all_metrics.append(temp_metric)
+
         if trial.should_prune():
             raise optuna.exceptions.TrialPruned()
 
+        # return value is objective value that Optuna will optimize
         return np.mean(all_metrics)
 
-    study = optuna.create_study(direction="maximize")
-    study.optimize(objective, n_trials=2)
+    # study object contains information about the required parameter space
+    # increase the return value of our optimization function
+    study = optuna.create_study(
+        sampler=optuna.samplers.TPESampler(), direction="maximize"
+    )
+    study.optimize(objective, n_trials=10)
 
     pruned_trials = [
         t for t in study.trials if t.state == optuna.trial.TrialState.PRUNED
@@ -114,7 +117,14 @@ if __name__ == "__main__":
 
     print(f"SCORE: {scores}")
 
-    # fig =optuna.visualization.plot_param_importances(study)
-    # fig2 =optuna.visualization.plot_contour(study, params=['learning_rate', 'optimizer'])
-    # fig.show()
-    # fig2.show()
+    fig = optuna.visualization.plot_param_importances(study)
+    fig2 = optuna.visualization.plot_contour(
+        study, params=["learning_rate", "optimizer"]
+    )
+    fig.show()
+    fig2.show()
+
+    df = study.trials_dataframe().drop(
+        ["state", "datetime_start", "datetime_complete"], axis=1
+    )
+    print(df)
