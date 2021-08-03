@@ -1,12 +1,13 @@
 import torch.nn as nn
 
+
 class Engine:
     def __init__(self, model, optimizer):
         self.model = model
         self.optimizer = optimizer
 
     def loss_fn(self, outputs, targets):
-        return nn.BCELoss()(outputs, targets) 
+        return nn.BCELoss()(outputs, targets)
 
     def train(self, dataloader):
         # train model

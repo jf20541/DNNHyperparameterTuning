@@ -39,8 +39,7 @@ def train(fold, params, save_model=False):
         dropout=params["dropout"],
     )
 
-
-    optimizer = params['optimizer'](model.parameters(), lr=params["learning_rate"])
+    optimizer = params["optimizer"](model.parameters(), lr=params["learning_rate"])
 
     eng = engine.Engine(model, optimizer)
 
@@ -69,7 +68,9 @@ def train(fold, params, save_model=False):
 
 def objective(trial):
     params = {
-        'optimizer': trial.suggest_categorical('optimizer', [torch.optim.Adam, torch.optim.SGD, torch.optim.AdamW]),
+        "optimizer": trial.suggest_categorical(
+            "optimizer", [torch.optim.Adam, torch.optim.SGD, torch.optim.AdamW]
+        ),
         "num_layers": trial.suggest_int("num_layers", 1, 7),
         "hidden_size": trial.suggest_int("hidden_size", 16, 128),
         "dropout": trial.suggest_uniform("dropout", 0.1, 0.5),

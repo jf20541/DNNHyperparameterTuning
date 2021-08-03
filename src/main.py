@@ -40,8 +40,7 @@ def train(fold, params, save_model=False):
         dropout=params["dropout"],
     )
 
-
-    optimizer = params['optimizer'](model.parameters(), lr=params["learning_rate"])
+    optimizer = params["optimizer"](model.parameters(), lr=params["learning_rate"])
 
     eng = Engine2(model, optimizer)
 
@@ -60,7 +59,7 @@ def train(fold, params, save_model=False):
         print(
             f"Epoch:{epochs+1}/{config.EPOCHS}, Train ROC-AUC: {train_metric:.4f}, Eval ROC-AUC: {eval_metric:.4f}"
         )
-            
+
         if eval_metric >= best_metric:
             best_metric = eval_metric
             if save_model:
@@ -74,10 +73,12 @@ def train(fold, params, save_model=False):
 
 
 if __name__ == "__main__":
-    
+
     def objective(trial):
         params = {
-            'optimizer': trial.suggest_categorical('optimizer', [torch.optim.Adam, torch.optim.AdamW]),
+            "optimizer": trial.suggest_categorical(
+                "optimizer", [torch.optim.Adam, torch.optim.AdamW]
+            ),
             "num_layers": trial.suggest_int("num_layers", 1, 5),
             "hidden_size": trial.suggest_int("hidden_size", 12, 84),
             "dropout": trial.suggest_uniform("dropout", 0.1, 0.4),
@@ -91,25 +92,28 @@ if __name__ == "__main__":
             raise optuna.exceptions.TrialPruned()
 
         return np.mean(all_metrics)
-    
+
     study = optuna.create_study(direction="maximize")
     study.optimize(objective, n_trials=2)
-    
-    pruned_trials = [t for t in study.trials if t.state == optuna.trial.TrialState.PRUNED]
-    complete_trials = [t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE]
 
-    n_trial= study.best_trial
+    pruned_trials = [
+        t for t in study.trials if t.state == optuna.trial.TrialState.PRUNED
+    ]
+    complete_trials = [
+        t for t in study.trials if t.state == optuna.trial.TrialState.COMPLETE
+    ]
+
+    n_trial = study.best_trial
     print(f"Best Trial: {n_trial}, Value: {n_trial.values}")
-    print(f'Best Parameters: {n_trial.params}')
-    
+    print(f"Best Parameters: {n_trial.params}")
+
     scores = 0
     for j in range(1):
         scr = train(j, n_trial.params, save_model=True)
         scores += scr
 
-    print(f'SCORE: {scores}')
-    
-    
+    print(f"SCORE: {scores}")
+
     # fig =optuna.visualization.plot_param_importances(study)
     # fig2 =optuna.visualization.plot_contour(study, params=['learning_rate', 'optimizer'])
     # fig.show()
