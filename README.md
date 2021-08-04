@@ -87,5 +87,4 @@ DeepNeuralNetwork(
     (19): Sigmoid()
   )
 )
-Ep
 ```  
