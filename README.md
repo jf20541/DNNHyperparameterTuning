@@ -12,19 +12,19 @@ Deep Neural Networks have a variety of hyperparameters such as **learning rate, 
 ## Output (Optimal HyperParameters)
 ```
 - 'optimizer': <class 'torch.optim.adamw.AdamW'>
-- 'num_layers': 4, 
-- 'hidden_size': 97, 
-- 'dropout': 0.38085407771111446, 
-- 'learning_rate': 0.00020197383590352865
+- 'num_layers': 6, 
+- 'hidden_size': 38, 
+- 'dropout': 0.11785186946366781, 
+- 'learning_rate': 0.00048109264473829103
  ```
 ```bash
        ....                   ....                  ....
-Epoch:10/15, Train ROC-AUC: 0.9539, Eval ROC-AUC: 0.8428
-Epoch:11/15, Train ROC-AUC: 0.9564, Eval ROC-AUC: 0.9069
-Epoch:12/15, Train ROC-AUC: 0.9578, Eval ROC-AUC: 0.9217
-Epoch:13/15, Train ROC-AUC: 0.9684, Eval ROC-AUC: 0.9290
-Epoch:14/15, Train ROC-AUC: 0.9688, Eval ROC-AUC: 0.9337
-Epoch:15/15, Train ROC-AUC: 0.9701, Eval ROC-AUC: 0.9501
+Epoch:10/15, Train ROC-AUC: 0.9539, Eval ROC-AUC: 0.9320
+Epoch:11/15, Train ROC-AUC: 0.9564, Eval ROC-AUC: 0.9394
+Epoch:12/15, Train ROC-AUC: 0.9578, Eval ROC-AUC: 0.9481
+Epoch:13/15, Train ROC-AUC: 0.9684, Eval ROC-AUC: 0.9539
+Epoch:14/15, Train ROC-AUC: 0.9688, Eval ROC-AUC: 0.9514
+Epoch:15/15, Train ROC-AUC: 0.9701, Eval ROC-AUC: 0.9625
 ```
 
 ## HyperParameters Importance
@@ -65,20 +65,27 @@ Epoch:15/15, Train ROC-AUC: 0.9701, Eval ROC-AUC: 0.9501
 ```
 DeepNeuralNetwork(
   (model): Sequential(
-    (0): Linear(in_features=31, out_features=97, bias=True)
-    (1): Dropout(p=0.38085407771111446, inplace=False)
+    (0): Linear(in_features=31, out_features=38, bias=True)
+    (1): Dropout(p=0.11785186946366781, inplace=False)
     (2): ReLU()
-    (3): Linear(in_features=97, out_features=97, bias=True)
-    (4): Dropout(p=0.38085407771111446, inplace=False)
+    (3): Linear(in_features=38, out_features=38, bias=True)
+    (4): Dropout(p=0.11785186946366781, inplace=False)
     (5): ReLU()
-    (6): Linear(in_features=97, out_features=97, bias=True)
-    (7): Dropout(p=0.38085407771111446, inplace=False)
+    (6): Linear(in_features=38, out_features=38, bias=True)
+    (7): Dropout(p=0.11785186946366781, inplace=False)
     (8): ReLU()
-    (9): Linear(in_features=97, out_features=97, bias=True)
-    (10): Dropout(p=0.38085407771111446, inplace=False)
+    (9): Linear(in_features=38, out_features=38, bias=True)
+    (10): Dropout(p=0.11785186946366781, inplace=False)
     (11): ReLU()
-    (12): Linear(in_features=97, out_features=1, bias=True)
-    (13): Sigmoid()
+    (12): Linear(in_features=38, out_features=38, bias=True)
+    (13): Dropout(p=0.11785186946366781, inplace=False)
+    (14): ReLU()
+    (15): Linear(in_features=38, out_features=38, bias=True)
+    (16): Dropout(p=0.11785186946366781, inplace=False)
+    (17): ReLU()
+    (18): Linear(in_features=38, out_features=1, bias=True)
+    (19): Sigmoid()
   )
 )
+Ep
 ```  
