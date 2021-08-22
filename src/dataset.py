@@ -11,7 +11,7 @@ class HotelDataSet:
     def __len__(self):
         return self.features.shape[0]
 
-    # return item on the index
+    # return item as tensors
     def __getitem__(self, idx):
         return {
             "features": torch.tensor(self.features[idx, :], dtype=torch.float),

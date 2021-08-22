@@ -58,6 +58,7 @@ def train(fold, params, save_model=False):
         # initiating training and evaluation function
         train_targets, train_outputs = eng.train_fn(train_loader)
         eval_targets, eval_outputs = eng.eval_fn(test_loader)
+        train_outputs = np.array(eval_outputs) >= 0.5
         eval_outputs = np.array(eval_outputs) >= 0.5
         # calculating roc-auc score for train&eval
         train_metric = roc_auc_score(train_targets, train_outputs)
@@ -92,7 +93,7 @@ if __name__ == "__main__":
             "num_layers": trial.suggest_int("num_layers", 1, 10),
             "hidden_size": trial.suggest_int("hidden_size", 2, 112),
             "dropout": trial.suggest_uniform("dropout", 0.1, 0.4),
-            "learning_rate": trial.suggest_loguniform("learning_rate", 1e-4, 1e-2),
+            "learning_rate": trial.suggest_loguniform("learning_rate", 0.0001, 0.01),
         }
         all_metrics = []
         for i in range(1):
