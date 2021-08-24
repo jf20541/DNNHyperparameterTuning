@@ -24,14 +24,16 @@ def train(fold, params, save_model=False):
     train_df = df[df.kfold != fold].reset_index(drop=True)
     valid_df = df[df.kfold == fold].reset_index(drop=True)
 
-    ytrain = train_df[["is_canceled"]].values
-    xtrain = train_df.drop("is_canceled", axis=1).values
+    # split the data into training and testing set (define features, target) values
+    y_train = train_df[["is_canceled"]].values
+    x_train = train_df.drop("is_canceled", axis=1).values
 
-    yvalid = valid_df[["is_canceled"]].values
-    xvalid = valid_df.drop("is_canceled", axis=1).values
+    y_test = valid_df[["is_canceled"]].values
+    x_test = valid_df.drop("is_canceled", axis=1).values
 
-    train_dataset = HotelDataSet(features=xtrain, targets=ytrain)
-    test_dataset = HotelDataSet(features=xvalid, targets=yvalid)
+    # feed the data into custom Dataset
+    train_dataset = HotelDataSet(x_train, y_train)
+    test_dataset = HotelDataSet(x_test, y_test)
 
     # initiate custom dataset and feed to dataloader
     train_loader = torch.utils.data.DataLoader(
@@ -42,13 +44,12 @@ def train(fold, params, save_model=False):
     )
     # inititate DNN with params
     model = DeepNeuralNetwork(
-        n_features=xtrain.shape[1],
-        n_targets=ytrain.shape[1],
+        n_features=x_train.shape[1],
+        n_targets=y_train.shape[1],
         n_layers=params["num_layers"],
         hidden_size=params["hidden_size"],
         dropout=params["dropout"],
     )
-    print(model)
 
     optimizer = params["optimizer"](model.parameters(), lr=params["learning_rate"])
     eng = Engine(model, optimizer)

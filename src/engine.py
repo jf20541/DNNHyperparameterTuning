@@ -6,8 +6,8 @@ class Engine:
         self.model = model
         self.optimizer = optimizer
 
-    # binary cross entroy
     def loss_fn(self, outputs, targets):
+        # binary cross entroy
         return torch.nn.BCELoss()(outputs, targets)
 
     def train_fn(self, dataloader):
