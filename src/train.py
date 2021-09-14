@@ -11,7 +11,7 @@ import torch.optim as optim
 
 
 def train(fold, params, save_model=False):
-    """[summary]
+    """Finding the optimal DNN parameters (Architecture) based on the best ROC-AUC performance
     Args:
         fold ([int]): [Stratified 5-Fold (avoids overfitting) ]
         params ([dict]): [define a combination of hyperparameters]
