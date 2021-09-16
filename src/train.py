@@ -97,7 +97,7 @@ if __name__ == "__main__":
             "learning_rate": trial.suggest_loguniform("learning_rate", 0.0001, 0.01),
         }
         all_metrics = []
-        for i in range(1):
+        for i in range(5):
             temp_metric = train(i, params, save_model=False)
             all_metrics.append(temp_metric)
 
