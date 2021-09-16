@@ -28,6 +28,8 @@ Epoch:15/15, Train ROC-AUC: 0.9701, Eval ROC-AUC: 0.9625
 ```
 
 ## HyperParameters Importance
+Provides functionality for evaluating hyperparameter importances based on completed trials in a given study
+
 - `optimizer:` Updates the model in response to the output of the loss function with complex derivatives
 - `num_layers:` Number of hidden layers in the model
 - `hidden_size:` Number of hidden unit or cells on each hidden layer 
