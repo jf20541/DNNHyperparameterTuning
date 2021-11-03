@@ -9,6 +9,21 @@ Deep Neural Networks have a variety of hyperparameters such as **learning rate, 
 2. Study: An optimization session, set of trials
 3. Parameter: Parameters optimized
 
+## Repository File Structure
+    ├── src          
+    │   ├── train.py             # Training the DNN, objective function to optimize hyper-parameters and evaluate  
+    │   ├── model.py             # Neural Networks architecture, inherits nn.Module
+    │   ├── engine.py            # Class Engine for Training, Evaluation, and Loss function 
+    │   ├── dataset.py           # Custom Dataset that return a paris of [input, label] as tensors
+    │   └── config.py            # Define path as global variable
+    ├── inputs
+    │   ├── train_folds.csv      # Stratified K-Fold Dataset 
+    │   └── train.csv            # Cleaned Data and Featured Engineered 
+    ├── models
+    │   └── model.bin            # Deep Neural Networks parameters saved into model.bin 
+    ├── requierments.txt         # Packages used for project
+    └── README.md
+
 ## Output (Optimal HyperParameters)
 ```
 - 'optimizer': <class 'torch.optim.adamw.AdamW'>
@@ -47,21 +62,6 @@ Provides functionality for evaluating hyperparameter importances based on comple
 - **Covariance Matrix Adaptation Evolution Strategy (CMA-ES):** Meta-heuristics model for continuous space. 
 - **RandomSearch:** Random parameters to fully explore all of its space equally. 
 
-
-## Repository File Structure
-    ├── src          
-    │   ├── train.py             # Training the DNN, objective function to optimize hyper-parameters and evaluate  
-    │   ├── model.py             # Neural Networks architecture, inherits nn.Module
-    │   ├── engine.py            # Class Engine for Training, Evaluation, and Loss function 
-    │   ├── dataset.py           # Custom Dataset that return a paris of [input, label] as tensors
-    │   └── config.py            # Define path as global variable
-    ├── inputs
-    │   ├── train_folds.csv      # Stratified K-Fold Dataset 
-    │   └── train.csv            # Cleaned Data and Featured Engineered 
-    ├── models
-    │   └── model.bin            # Deep Neural Networks parameters saved into model.bin 
-    ├── requierments.txt         # Packages used for project
-    └── README.md
 
 ## Model's Architecture
 ```
